@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import CardList from "../components/CardList";
 import SearchBox from "../components/SearchBox";
-import changeSearchField from "./actions";
+import { changeSearchField, fetchRobots } from "./actions";
 import Scroll from "../components/Scroll";
 import "./App.css";
 
@@ -15,11 +15,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((users) => {
-        this.setState({ robots: users });
-      });
+    this.props.fetchRobots();
   }
 
   onSearchChange = (event) => {
@@ -27,8 +23,14 @@ class App extends Component {
   };
 
   render() {
-    const { robots } = this.state;
-    const { searchField, onSearchChange } = this.props;
+    const {
+      robots,
+      error,
+      isPending,
+      searchField,
+      onSearchChange,
+    } = this.props;
+
     const filteredRobots = robots.filter((robot) => {
       return robot.name.toLowerCase().includes(searchField.toLowerCase());
     });
@@ -46,11 +48,17 @@ class App extends Component {
   }
 }
 const mapStateToProps = (state) => {
-  return { searchField: state.searchField };
+  return {
+    searchField: state.searchFieldReducer.searchField,
+    isPending: state.fetchRobotsReducer.isPending,
+    robots: state.fetchRobotsReducer.robots,
+    error: state.fetchRobotsReducer.error,
+  };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     onSearchChange: (event) => dispatch(changeSearchField(event.target.value)),
+    fetchRobots: () => dispatch(fetchRobots()),
   };
 };
 
