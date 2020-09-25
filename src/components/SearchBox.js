@@ -9,6 +9,7 @@ const SearchBox = ({ searchfield, searchChange }) => {
         type="search"
         placeholder="search robots"
         onChange={searchChange}
+        aria-lebel="input reobot name"
       />
     </div>
   );
